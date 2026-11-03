@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Página não encontrada — Hestia</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#08080a" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/assets/icon-512.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter+Tight:ital,wght@0,400;0,500;0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <style>
+      body {
+        background: radial-gradient(50% 60% at 30% 10%, rgba(255, 106, 61, 0.12), transparent 70%), var(--ink);
+      }
+      .nf {
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding-block: 140px 90px;
+      }
+      .nf h1 {
+        font-size: clamp(40px, 7vw, 78px);
+        line-height: 0.95;
+        max-width: 760px;
+      }
+      .nf h1 em {
+        font-family: var(--serif);
+        font-style: italic;
+        font-weight: 400;
+        letter-spacing: -0.02em;
+        color: var(--ember-2);
+      }
+      .nf .lede {
+        margin-top: 24px;
+        max-width: 480px;
+      }
+      .nf .hero-actions {
+        justify-content: flex-start;
+        margin-top: 32px;
+      }
+      .nf-foot {
+        margin-top: 80px;
+        padding-top: 22px;
+        border-top: 1px solid var(--line-soft);
+        font-family: var(--mono);
+        font-size: 9.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #655f57;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header scrolled">
+      <div class="wrap header-inner">
+        <a class="brand" href="/" aria-label="Hestia, início">
+          <img class="brand-mark" src="/assets/hestia-h.svg" width="32" height="32" alt="" />
+          <span class="brand-word">hestia</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="nf">
+      <div class="wrap">
+        <p class="eyebrow"><span class="num">404</span> Página não encontrada</p>
+        <h1>Essa página saiu<br /><em>da planta.</em></h1>
+        <p class="lede">
+          O endereço não existe ou mudou de lugar. Volte ao início — ou abra o Hestia e continue de onde
+          parou.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-solid" href="/">
+            Voltar ao início
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8H3M7 4 3 8l4 4" /></svg>
+          </a>
+          <a class="btn btn-ghost" href="/app/">Abrir o Hestia</a>
+        </div>
+        <p class="nf-foot">hestiabim.com</p>
+      </div>
+    </main>
+  </body>
+</html>

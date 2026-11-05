@@ -73,17 +73,29 @@
         ]
       }
     </script>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VRRV93S3QV"></script>
+    <!-- Cookies: Consent Mode v2 começa negado; consent.js coleta a escolha. -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
         dataLayer.push(arguments);
       }
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        wait_for_update: 500
+      });
+      try {
+        if (localStorage.getItem('hestia:consent') === 'granted') {
+          gtag('consent', 'update', { analytics_storage: 'granted' });
+        }
+      } catch (e) {}
       gtag('js', new Date());
-
       gtag('config', 'G-VRRV93S3QV');
     </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VRRV93S3QV"></script>
+    <script src="consent.js" defer></script>
 
     <script>
       document.documentElement.classList.add('js');
@@ -857,6 +869,8 @@
               rel="noopener"
               >MIT</a
             >
+            ·
+            <button type="button" class="footer-link" data-consent-open>Cookies</button>
           </p>
         </div>
       </div>

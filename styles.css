@@ -1528,6 +1528,25 @@ code {
   color: var(--paper);
 }
 
+.footer-bottom .footer-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--paper-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(244, 239, 230, 0.3);
+  cursor: pointer;
+}
+
+.footer-bottom .footer-link:hover {
+  color: var(--paper);
+  text-decoration-color: currentColor;
+}
+
 .footer-word {
   margin: 10px 0 -0.14em;
   font-size: clamp(80px, 19.5vw, 250px);

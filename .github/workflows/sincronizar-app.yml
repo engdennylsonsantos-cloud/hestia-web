@@ -4,12 +4,12 @@ name: sincronizar app
 # quando há versão nova, copia os assets dela para `app/` e commita — o push dispara o deploy da
 # Vercel (integração Git do projeto `hestia`).
 #
-# Por que de hora em hora: o repositório é privado e cada execução gasta minutos de Actions. Para
-# publicação imediata, use "Run workflow" (workflow_dispatch) ou reduza o intervalo.
+# Repositório público: minutos de Actions não são cobrados, então dá para checar a cada 15 minutos.
+# Para publicação imediata, use "Run workflow" (workflow_dispatch).
 
 on:
   schedule:
-    - cron: '17 * * * *'
+    - cron: '*/15 * * * *'
   workflow_dispatch:
 
 permissions:

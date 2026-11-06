@@ -1,0 +1,67 @@
+name: sincronizar app
+
+# O /app do site é um build estático do Hestia. Este workflow confere a última release publicada e,
+# quando há versão nova, copia os assets dela para `app/` e commita — o push dispara o deploy da
+# Vercel (integração Git do projeto `hestia`).
+#
+# Por que de hora em hora: o repositório é privado e cada execução gasta minutos de Actions. Para
+# publicação imediata, use "Run workflow" (workflow_dispatch) ou reduza o intervalo.
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sincronizar-app
+  cancel-in-progress: false
+
+jobs:
+  sincronizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Sincronizar app/
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node scripts/sincronizar-app.mjs
+
+      - name: Commitar e publicar
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A app
+          if git diff --staged --quiet; then
+            echo "app já estava em dia — nada a commitar"
+            exit 0
+          fi
+          versao=$(grep -o 'name="hestia-version" content="[^"]*"' app/index.html | sed 's/.*content="//; s/"$//')
+          git commit -m "app: sincroniza v${versao}"
+          git push
+          echo "VERSAO_PUBLICADA=${versao}" >> "$GITHUB_ENV"
+
+      # Portão: sem isso, "automático" só troca o erro manual por um erro silencioso. Compara a meta
+      # carimbada no build com a versão que o site está servindo, com margem para o deploy da Vercel.
+      - name: Conferir o /app publicado
+        if: env.VERSAO_PUBLICADA != ''
+        run: |
+          for tentativa in $(seq 1 20); do
+            html=$(curl -sS "https://www.hestiabim.com/app/?cb=$(date +%s)-${tentativa}")
+            versao=$(printf '%s' "$html" | grep -o 'name="hestia-version" content="[^"]*"' | cut -d'"' -f4)
+            if [ "$versao" = "$VERSAO_PUBLICADA" ]; then
+              echo "site no ar com a versão $VERSAO_PUBLICADA"
+              exit 0
+            fi
+            echo "tentativa $tentativa: site ainda em ${versao:-desconhecida}"
+            sleep 30
+          done
+          echo "::error::site não atualizou para $VERSAO_PUBLICADA (última versão vista: ${versao:-nenhuma})"
+          exit 1

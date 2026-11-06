@@ -1,5 +1,11 @@
 # Publicar na Vercel com o domínio na Hostinger
 
+> **Atualização (nov/2026):** o projeto `hestia` está conectado ao repositório `hestia-web` pela
+> integração Git da Vercel — todo push em `main` publica sozinho. O workflow
+> `.github/workflows/sincronizar-app.yml` copia o app da última release do Hestia para `app/`
+> de hora em hora (ou na hora, em Actions → sincronizar app → Run workflow). O deploy manual
+> descrito abaixo continua valendo como plano B.
+
 Caminho escolhido: **deploy direto pela CLI**, projeto `hestia`, domínio principal
 `www.hestiabim.com` e `hestiabim.com` redirecionando para o `www`.
 
@@ -81,7 +87,11 @@ enviados no deploy.
 
 ## 5. Atualizar depois
 
-Na pasta `site`:
+O caminho normal é **não fazer nada**: o push em `main` publica. Para forçar a sincronização do
+app antes da próxima hora, rode o workflow `sincronizar-app` (Actions → Run workflow) ou, na
+máquina, `node scripts/sincronizar-app.mjs` e commite.
+
+Deploy manual, como plano B, na pasta do repositório:
 
 ```powershell
 npx vercel --prod
@@ -92,4 +102,4 @@ npx vercel --prod
 - Hospedagem na Hostinger.
 - Transferir o domínio.
 - Servidor, banco ou SSL pago.
-- Git: o deploy direto pela CLI já serve.
+- Git: já está conectado; o deploy pela CLI é só plano B.

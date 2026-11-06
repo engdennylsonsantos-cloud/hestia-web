@@ -46,6 +46,7 @@ function versaoDoHtml(html) {
 }
 
 async function baixarAssets(tag) {
+  if (tag && !tag.startsWith('v')) tag = 'v' + tag;
   const url = tag
     ? 'https://api.github.com/repos/' + REPO + '/releases/tags/' + encodeURIComponent(tag)
     : 'https://api.github.com/repos/' + REPO + '/releases/latest';
@@ -171,6 +172,7 @@ async function principal() {
 
   console.log('app sincronizado: ' + (versaoAtual || 'antes') + ' -> ' + versao);
   console.log('arquivos: ' + nomes.sort().join(', '));
+  if (!pastaDist) await rm(origem.pasta, { recursive: true, force: true });
 }
 
 principal().catch((erro) => {

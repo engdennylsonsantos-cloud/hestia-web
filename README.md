@@ -7,7 +7,7 @@ Repositório público: <https://github.com/engdennylsonsantos-cloud/Hestia>
 
 Licença: **MIT**, sem CLA. Contribuições entram sob MIT e não geram pagamento nem
 royalty. O app é gratuito. Detalhes no repositório do produto:
-`hestia-gpu/LICENSING.md`, `hestia-gpu/CONTRIBUTING.md` e `hestia-gpu/NOTICE`.
+`Hestia/LICENSING.md`, `Hestia/CONTRIBUTING.md` e `Hestia/NOTICE`.
 
 O app completo também está publicado aqui, em [`app/`](app/), então o botão
 **Abrir o Hestia** funciona de verdade no mesmo domínio.
@@ -32,17 +32,20 @@ site/
 │   ├── planta.png · planta-close.png
 │   ├── og.png                    imagem de compartilhamento (1200×630)
 │   └── casa-terrea-2-quartos.hestia.json   projeto de exemplo
-├── app/                          build de produção do Hestia (gerado)
-│   ├── index.html
-│   └── resolveWorker-*.js
+├── app/                          build de produção do Hestia (sincronizado do Release)
+│   ├── index.html                arquivo único com o app
+│   ├── geom_wasm.wasm            kernel geométrico experimental
+│   ├── avisosWorker-*.js         worker de avisos de cálculo
+│   ├── ifcWorker-*.js            worker da importação IFC
+│   └── resolveWorker-*.js        worker de resolução geométrica
 └── scripts/                      captura de imagens e revisão (não vai para produção)
 ```
 
 ## Rodar localmente
 
 ```powershell
-cd site
-python -m http.server 5300
+cd hestia-web
+npx --yes serve . -l 5300
 # abra http://127.0.0.1:5300
 ```
 
@@ -50,23 +53,15 @@ O app em `/app/` é um build estático e abre sem servidor de aplicação.
 
 ## Publicar
 
-O site é 100% estático. Em qualquer host (Cloudflare Pages, Netlify, Vercel,
-GitHub Pages, S3), publique a pasta `site/` como raiz.
+O site é estático e está publicado na **Vercel**, no projeto `hestia`, com
+integração Git: **todo push em `main` publica**. Não há build — a Vercel serve
+o repositório como está, respeitando o `.vercelignore` (`scripts/`, `README.md`
+e `DEPLOY.md` não vão para produção).
 
-### Cloudflare Pages (sugestão)
+Domínios: `www.hestiabim.com` (principal) e `hestiabim.com` (redireciona para o www).
+Deploy manual pela CLI, como plano B, está em `DEPLOY.md`.
 
-1. Crie um projeto em **Workers & Pages → Pages → Upload assets**.
-2. Envie a pasta `site/` (sem `scripts/`).
-3. Em **Custom domains**, adicione `hestiabim.com` e `www.hestiabim.com`.
-4. No registrador, aponte o DNS para o Cloudflare (nameservers) ou use os
-   registros CNAME indicados pelo Pages.
-
-Se preferir deploy por Git, configure:
-
-- **Build command:** *(vazio)*
-- **Output directory:** `site`
-
-### Contato
+## Contato
 
 O site não publica e-mail por enquanto. O contato é pelo GitHub, em
 [issues](https://github.com/engdennylsonsantos-cloud/Hestia/issues).
@@ -75,18 +70,22 @@ Quando houver um endereço de e-mail, adicione-o no FAQ e no rodapé de
 
 ## Atualizar o app em `/app/`
 
-O build é gerado no repositório do produto:
+Não se copia mais arquivo à mão. O workflow `.github/workflows/sincronizar-app.yml`
+roda a cada 15 minutos (ou em Actions → **sincronizar app** → *Run workflow*) e:
+
+1. lê a última release publicada em `engdennylsonsantos-cloud/Hestia`;
+2. baixa `index.html`, os três workers e `geom_wasm.wasm` dos assets do Release;
+3. confere a meta `<meta name="hestia-version">` do HTML contra a tag;
+4. substitui `app/` e commita (`app: sincroniza vX.Y.Z`), o que dispara o deploy;
+5. espera o site publicar e falha se a versão servida em `/app` não bater.
+
+Na máquina, o mesmo caminho:
 
 ```powershell
-cd ..\hestia-gpu
-npm run build
-Copy-Item apps\web\dist\index.html ..\site\app\index.html -Force
-Copy-Item apps\web\dist\resolveWorker-*.js ..\site\app\ -Force
-Copy-Item apps\web\dist\ifcWorker-*.js ..\site\app\ -Force
+node scripts/sincronizar-app.mjs                                  # última release
+node scripts/sincronizar-app.mjs v0.2.1                           # uma tag
+node scripts/sincronizar-app.mjs --dist ../Hestia/apps/web/dist  # build local
 ```
-
-Se o nome dos workers mudar, apague os arquivos antigos de `site/app/` antes. O `ifcWorker` é usado pela
-importação IFC; sem ele, o app abre mas a importação falha.
 
 ## Regerar as imagens
 
@@ -95,11 +94,11 @@ e o `playwright-core` do repositório do Hestia.
 
 ```powershell
 # terminal 1 — app
-cd ..\hestia-gpu\apps\web
+cd ../Hestia/apps/web
 npx vite --port 5200 --strictPort
 
 # terminal 2 — capturas
-cd ..\..\..\site
+cd ../../../hestia-web
 node scripts/capture.mjs   # hero, planta, detalhe e 3D
 node scripts/og.mjs        # imagem Open Graph
 ```
@@ -114,7 +113,7 @@ links, imagens, menu e overflow.
 ## Antes de publicar — revisar
 
 - [ ] `LICENSE` (MIT), `LICENSING.md`, `CONTRIBUTING.md` e `NOTICE` commitados e visíveis no GitHub.
-- [ ] `app/` é o build mais recente do produto.
+- [ ] `app/` está sincronizado com a última release (o workflow cuida; confira a meta `hestia-version`).
 - [ ] Imagens continuam batendo com a interface atual.
 - [ ] `og.png` e as metas `og:*` apontam para `https://www.hestiabim.com`.
 - [ ] Analytics/privacidade: o site não usa cookies, mas carrega fontes do Google.

@@ -3,18 +3,19 @@
 > **Atualização (nov/2026):** o projeto `hestia` está conectado ao repositório `hestia-web` pela
 > integração Git da Vercel — todo push em `main` publica sozinho. O workflow
 > `.github/workflows/sincronizar-app.yml` copia o app da última release do Hestia para `app/`
-> de hora em hora (ou na hora, em Actions → sincronizar app → Run workflow). O deploy manual
+> a cada 15 minutos (ou na hora, em Actions → sincronizar app → Run workflow). O deploy manual
 > descrito abaixo continua valendo como plano B.
 
-Caminho escolhido: **deploy direto pela CLI**, projeto `hestia`, domínio principal
-`www.hestiabim.com` e `hestiabim.com` redirecionando para o `www`.
+Caminho principal: **integração Git** — todo push em `main` publica. O deploy pela CLI, descrito abaixo,
+continua valendo como plano B. Projeto `hestia`, domínio principal `www.hestiabim.com` e
+`hestiabim.com` redirecionando para o `www`.
 
 ## 1. Deploy
 
-Abra o terminal na pasta `site`:
+Abra o terminal na pasta deste repositório (ajuste se o clone estiver em outro lugar):
 
 ```powershell
-cd C:\Users\Dennylson\Desktop\programas\Hestia\site
+cd C:\Users\User\Documents\PROGRAMAS\hestia-web
 npx vercel login
 npx vercel --prod
 ```
